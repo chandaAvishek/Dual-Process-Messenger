@@ -142,53 +142,55 @@ bash run_all.sh
 ### Single-Process
 
 ```mermaid
-classDiagram
-    class SenderComponent {
-        +send(message)
-    }
+sequenceDiagram
+    participant Initiator
+    participant Queue as "BlockingQueue"
+    participant Responder
 
-    class ReceiverComponent {
-        +receive() message
-    }
-
-    class InternalMessageQueue {
-        +push(message)
-        +pop() message
-    }
-
-    SenderComponent --> InternalMessageQueue : "1. send(message)"
-    InternalMessageQueue --> ReceiverComponent : "2. receive()"
-    
-    note for SenderComponent "Single-Process Communication"
-    note for InternalMessageQueue "Components share the same memory space\nNo serialization needed\nFast but limited to one process"
-
-```    
+    Note over Initiator,Responder: Single-Process Communication
+    Initiator->>Queue: put("ping 1")
+    Queue->>Responder: take()
+    Responder->>Queue: put("ping 1 1")
+    Queue->>Initiator: take()
+    loop 9 more times
+        Initiator->>Queue: put("ping X Y")
+        Queue->>Responder: take()
+        Responder->>Queue: put("ping X Y Z")
+        Queue->>Initiator: take()
+    end
+```
 ### Multi-Process
 
 ```mermaid
-classDiagram
-    class ProcessA {
-        +Sender
-        +send(message)
-    }
+sequenceDiagram
+    participant Initiator
+    participant Responder
 
-    class ProcessB {
-        +Receiver
-        +receive() message
-    }
-
-    class IPC_Channel {
-        +Shared Memory / Pipes / Sockets / Message Queue
-        +put(message)
-        +get() message
-    }
-
-    ProcessA --> IPC_Channel : "1. send(message)"
-    IPC_Channel --> ProcessB : "2. receive()"
-    
-    note for IPC_Channel "Inter-Process Communication (IPC)\nRequires serialization\nSlower but works across processes/machines"
-
+    Note over Initiator,Responder: Multi-Process Communication
+    Initiator->>Responder: Socket.connect()
+    loop 10 message exchanges
+        Initiator->>Responder: "ping X" via OutputStream
+        Responder->>Initiator: "ping X Y" via OutputStream
+    end
+    Initiator->>Responder: close()
 ```
+
+## Complete Message Flow Diagram
+```mermaid
+sequenceDiagram
+    participant Initiator
+    participant Responder
+    
+    Note over Initiator,Responder: 10-Message Exchange Cycle
+    
+    loop 10 Rounds
+        Initiator->>Responder: "ping " + counter
+        Responder->>Initiator: "ping " + counter + " " + counter
+    end
+    
+    Initiator->>Responder: close()
+```
+
 ## Conclusion
 
 This project serves as a practical example of implementing message passing in Java, covering both single-process and multi-process scenarios. The single-process mode demonstrates the use of `BlockingQueue` for seamless communication between threads within the same JVM, while the multi-process mode highlights the use of Java Sockets for enabling communication between separate JVMs. 
