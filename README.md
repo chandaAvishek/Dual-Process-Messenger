@@ -142,7 +142,7 @@ bash run_all.sh
 ## Message Flow
 
 ### Single-Process
-```
+
 @startuml
 participant Initiator
 participant "BlockingQueue" as Queue
@@ -153,7 +153,7 @@ Queue -> Responder: take()
 Responder -> Queue: put("ping 1 1")
 Queue -> Initiator: take()
 @enduml
-```
+
 ### Multi-Process
 
 ```
