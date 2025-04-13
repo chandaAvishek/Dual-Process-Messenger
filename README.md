@@ -94,8 +94,7 @@ mvn exec:java@multi-process-initiator
     └── run_all.sh
 ```    
 
-## Execution Modes
-
+## Execution Modep
 
 ```bash
 bash run_all.sh
@@ -193,6 +192,6 @@ sequenceDiagram
 
 ## Conclusion
 
-This project serves as a practical example of implementing message passing in Java, covering both single-process and multi-process scenarios. The single-process mode demonstrates the use of `BlockingQueue` for seamless communication between threads within the same JVM, while the multi-process mode highlights the use of Java Sockets for enabling communication between separate JVMs. 
+<p>This project serves as a practical example of implementing message passing in Java, covering both single-process and multi-process scenarios. The single-process mode demonstrates the use of `BlockingQueue` for seamless communication between threads within the same JVM, while the multi-process mode highlights the use of Java Sockets for enabling communication between separate JVMs. </p>
 ---
 
