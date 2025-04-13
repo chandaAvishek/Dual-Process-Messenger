@@ -1,0 +1,16 @@
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore Maven build directory
+target/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
