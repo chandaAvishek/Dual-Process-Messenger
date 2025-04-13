@@ -11,8 +11,6 @@ A Java implementation demonstrating message passing between Player instances in:
 
 ## System Architecture
 
-## UML Diagram (Mermaid)
-
 ```mermaid
 classDiagram
     class Player {
@@ -143,32 +141,54 @@ bash run_all.sh
 
 ### Single-Process
 
-@startuml
-participant Initiator
-participant "BlockingQueue" as Queue
-participant Responder
+```mermaid
+classDiagram
+    class SenderComponent {
+        +send(message)
+    }
 
-Initiator -> Queue: put("ping 1")
-Queue -> Responder: take()
-Responder -> Queue: put("ping 1 1")
-Queue -> Initiator: take()
-@enduml
+    class ReceiverComponent {
+        +receive() message
+    }
 
+    class InternalMessageQueue {
+        +push(message)
+        +pop() message
+    }
+
+    SenderComponent --> InternalMessageQueue : "1. send(message)"
+    InternalMessageQueue --> ReceiverComponent : "2. receive()"
+    
+    note for SenderComponent "Single-Process Communication"
+    note for InternalMessageQueue "Components share the same memory space\nNo serialization needed\nFast but limited to one process"
+
+```    
 ### Multi-Process
 
-```
-@startuml
-participant Initiator
-participant Responder
+```mermaid
+classDiagram
+    class ProcessA {
+        +Sender
+        +send(message)
+    }
 
-Initiator -> Responder: Socket.connect()
-Initiator -> Responder: "ping 1" (OutputStream)
-Responder -> Initiator: "ping 1 1" (OutputStream)
-... 10x ...
-Initiator -> Responder: close()
-@enduml
-```
+    class ProcessB {
+        +Receiver
+        +receive() message
+    }
 
+    class IPC_Channel {
+        +Shared Memory / Pipes / Sockets / Message Queue
+        +put(message)
+        +get() message
+    }
+
+    ProcessA --> IPC_Channel : "1. send(message)"
+    IPC_Channel --> ProcessB : "2. receive()"
+    
+    note for IPC_Channel "Inter-Process Communication (IPC)\nRequires serialization\nSlower but works across processes/machines"
+
+```
 ## Conclusion
 
 This project serves as a practical example of implementing message passing in Java, covering both single-process and multi-process scenarios. The single-process mode demonstrates the use of `BlockingQueue` for seamless communication between threads within the same JVM, while the multi-process mode highlights the use of Java Sockets for enabling communication between separate JVMs. 
