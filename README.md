@@ -94,7 +94,7 @@ mvn exec:java@multi-process-initiator
     └── run_all.sh
 ```    
 
-## Execution Modep
+## Execution Modes
 
 ```bash
 bash run_all.sh
